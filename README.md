@@ -91,7 +91,7 @@ GeoFare/
 
 The GeoFare Data Dictionary describes all database tables, fields, data types, constraints, and relationships used by the system.
 
-### Database Tables
+ Database Tables
 - PASSENGER
 - TRIP
 - GPS_LOG
