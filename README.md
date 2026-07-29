@@ -86,6 +86,7 @@ GeoFare/
     ├── 3.0-Manage-Plate-Identification.md
     └── 4.0-Manage-Reports-and-LGU-Dashboard.md
 
+```
 
 ##Data Dictionary
 
