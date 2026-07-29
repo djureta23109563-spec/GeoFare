@@ -88,7 +88,7 @@ GeoFare/
 
 ```
 
-##Data Dictionary
+## Data Dictionary
 
 The GeoFare Data Dictionary describes all database tables, fields, data types, constraints, and relationships used by the system.
 
