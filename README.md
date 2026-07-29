@@ -85,3 +85,18 @@ GeoFare/
     ├── 2.0-Manage-Route-Monitoring.md
     ├── 3.0-Manage-Plate-Identification.md
     └── 4.0-Manage-Reports-and-LGU-Dashboard.md
+
+
+Data Dictionary
+
+The GeoFare Data Dictionary describes all database tables, fields, data types, constraints, and relationships used by the system.
+
+### Database Tables
+- PASSENGER
+- TRIP
+- GPS_LOG
+- REPORT
+- LGU_STAFF
+- FARE_RATE
+- PLATE_REFERENCE
+- AUDIT_LOG
