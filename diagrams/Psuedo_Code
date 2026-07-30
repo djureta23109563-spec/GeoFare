@@ -1,19 +1,171 @@
-// GeoFare: Manage Trip & Fare Computation (DFD Level 2 Process 1.0)
-void function ProcessTripAndFare
-    // Sub-process 1.1: Capture Pickup Location
-    Receive passengerTripRequest
-    pickupGPS = getCurrentLocation()
-    Save pickupGPS to Trip_Logs
+ALGORITHM: Estimate Fare
 
-    // Sub-process 1.2: Capture Drop-off Location
-    Receive destinationInput
-    dropoffGPS = getDestinationLocation()
-    Save dropoffGPS to Trip_Logs
+BEGIN
 
-    // Sub-process 1.3: Calculate Distance & Fare
-    tripDistance = computeDistance(pickupGPS, dropoffGPS)
-    computedFare = applyLocalFareRules(tripDistance)
-    Save tripDistance, computedFare to Trip_Logs
+    INPUT Passenger_Pickup_Location
+    INPUT Passenger_Dropoff_Location
 
-    Display computedFare to passenger
-END function
+    CAPTURE Pickup_GPS_Coordinates
+    CAPTURE Dropoff_GPS_Coordinates
+
+    COMPUTE Trip_Distance
+
+    RETRIEVE Official_Base_Fare
+    RETRIEVE Per_Kilometer_Rate
+
+    COMPUTE Estimated_Fare =
+        Official_Base_Fare +
+        (Trip_Distance × Per_Kilometer_Rate)
+
+    DISPLAY Trip_Distance
+    DISPLAY Estimated_Fare
+
+    SAVE Trip_Details
+    SAVE Estimated_Fare
+
+END
+ALGORITHM: Get Pickup Location
+
+BEGIN
+
+    REQUEST Pickup_Location
+
+    GET GPS_Coordinates
+
+    IF GPS_Coordinates are available THEN
+        SAVE Pickup_Location
+    ELSE
+        DISPLAY "Unable to obtain pickup location."
+        REQUEST Passenger to enable GPS
+    ENDIF
+
+END
+ALGORITHM: Get Drop-off Location
+
+BEGIN
+
+    REQUEST Dropoff_Location
+
+    GET GPS_Coordinates
+
+    IF GPS_Coordinates are available THEN
+        SAVE Dropoff_Location
+    ELSE
+        DISPLAY "Unable to obtain drop-off location."
+        REQUEST Passenger to select or enter the destination again
+    ENDIF
+
+END
+ALGORITHM: Calculate Estimated Fare
+
+BEGIN
+
+    RETRIEVE Pickup_Location
+    RETRIEVE Dropoff_Location
+
+    COMPUTE Trip_Distance
+
+    RETRIEVE Official_Base_Fare
+    RETRIEVE Per_Kilometer_Rate
+
+    IF Trip_Distance <= Base_Fare_Coverage THEN
+
+        Estimated_Fare ← Official_Base_Fare
+
+    ELSE
+
+        Additional_Distance ←
+            Trip_Distance - Base_Fare_Coverage
+
+        Additional_Fare ←
+            Additional_Distance × Per_Kilometer_Rate
+
+        Estimated_Fare ←
+            Official_Base_Fare + Additional_Fare
+
+    ENDIF
+
+    DISPLAY Estimated_Fare
+
+    SAVE Trip_Distance
+    SAVE Estimated_Fare
+
+END
+ALGORITHM: Track Passenger Route
+
+BEGIN
+
+    RETRIEVE Passenger_Trip_Record
+
+    START Route_Monitoring
+
+    WHILE Trip is Active DO
+
+        GET Current_GPS_Location
+
+        RECORD Current_GPS_Location
+
+        UPDATE Passenger_Route
+
+    ENDWHILE
+
+    STOP Route_Monitoring
+
+    SAVE Recorded_Route
+
+END
+ALGORITHM: Capture Tricycle Plate Number
+
+BEGIN
+
+    REQUEST Passenger to capture Plate_Image
+
+    CAPTURE Plate_Image
+
+    RUN OCR
+
+    IF Plate_Number is recognized THEN
+
+        SAVE Plate_Number
+
+    ELSE
+
+        DISPLAY "Plate number could not be recognized."
+
+        REQUEST Passenger to enter Plate_Number manually
+
+        SAVE Manual_Plate_Number
+
+    ENDIF
+
+    LINK Plate_Number to Passenger_Trip_Record
+
+    SAVE Plate_Number
+
+END
+ALGORITHM: Submit Passenger Report
+
+BEGIN
+
+    RETRIEVE Passenger_Trip_Record
+
+    REQUEST Report_Details
+
+    RETRIEVE Plate_Number
+    RETRIEVE Recorded_Route
+    RETRIEVE Trip_Date_and_Time
+    RETRIEVE Passenger_Complaint
+
+    COMBINE Trip_Details and Report_Details
+
+    SUBMIT Report
+
+    SAVE Report to Reports_Database
+
+    SEND Report to LGU_Dashboard
+
+    LGU reviews Submitted_Report
+
+    UPDATE Report_Status
+
+END
